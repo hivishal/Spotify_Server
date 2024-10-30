@@ -13,7 +13,7 @@ app.get('/login',async(req,res)=>{
         token = await Post(code) ;
         res.redirect('http://localhost:3000/Dashboard');
     }catch{
-        res.send("Internal Server Error!");
+        res.send("Internal Server Error from post!");
     }
     
 });
