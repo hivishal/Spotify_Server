@@ -18,6 +18,7 @@ export default async function Post(ode){
             'Authorization': `Basic ${Buffer.from(`${client_id}:${client_secret}`).toString('base64')}`
         }
     })
+    return Token ;
 }catch(error){ 
     console.error(error);
 }
