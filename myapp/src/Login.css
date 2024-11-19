@@ -1,0 +1,23 @@
+.child{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: #292929;
+   
+}
+
+.click {
+    background-color:#1ed760;
+    border-radius: 5%;
+    border: 0px ;
+    color: white;
+    height: 70px;
+    width: 150px;
+}
+.click:hover{
+    background-color: #292929;
+    color: white;
+    border: solid 2px white;
+}
