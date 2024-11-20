@@ -75,6 +75,7 @@ if(player){
     return (
         <div className='child'>
             <h1 style={{ color: '#1ed760' }}>gello world</h1>
+            <h1>player</h1>
         </div>
 )
 
