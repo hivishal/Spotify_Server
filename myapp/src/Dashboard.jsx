@@ -38,11 +38,12 @@ export default function Dashboard(){
     
            await player.connect();
 
-        
+        return()=>{
+            document.body.removeChild(script)
+        }
         };
     }, [a.access_token]);
     
-//since the isready flag is set to true keep the if else statement ready to render the music player
 
         const transferPlayback = async (accessToken, device) => {
             const url = 'https://api.spotify.com/v1/me/player';
@@ -68,14 +69,40 @@ export default function Dashboard(){
             }
         };
 
-if(player){
-    transferPlayback(a.access_token,device);
-}
+
+    if(device!==undefined){
+        transferPlayback(a.access_token,device);
+        const c  = Initialplay(device, a.access_token);
+        console.log(c) ;
+    }
+
+    async function  Initialplay(device, accessToken) {
+        const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
+        const trackUri = 'spotify:track:1ARJhjuI6TNYZCxYygFQ4F';
+        const body = {
+            uris: [trackUri],  
+            position_ms: 0     
+        };
+    
+        const c  = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+        return c ;
+    }
+    
+    
+
     
     return (
         <div className='child'>
             <h1 style={{ color: '#1ed760' }}>gello world</h1>
-            <h1>player</h1>
+            <h1 style={{ color: '#1ed760' }}>player</h1>
+            
         </div>
 )
 
