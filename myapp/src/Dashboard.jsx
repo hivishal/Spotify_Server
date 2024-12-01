@@ -72,13 +72,12 @@ export default function Dashboard(){
 
     if(device!==undefined){
         transferPlayback(a.access_token,device);
-        const c  = Initialplay(device, a.access_token);
-        console.log(c) ;
+        Initialplay(device, a.access_token);
     }
 
     async function  Initialplay(device, accessToken) {
         const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
-        const trackUri = 'spotify:track:1ARJhjuI6TNYZCxYygFQ4F';
+        const trackUri = 'spotify:track:0G21yYKMZoHa30cYVi1iA8?si=ebd661cc1c9c4c21';
         const body = {
             uris: [trackUri],  
             position_ms: 0     
@@ -94,16 +93,29 @@ export default function Dashboard(){
         })
         return c ;
     }
-    
-    
 
+    async function Pause(token){
+        const uri = 'https://api.spotify.com/v1/me/player/pause'
+        try{
+        const response = await fetch(uri,{
+            method:'PUT',
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        })
+        return(response)
+    }catch(error){
+        console.error(error);
+    }
+    }
     
     return (
         <div className='child'>
             <h1 style={{ color: '#1ed760' }}>gello world</h1>
             <h1 style={{ color: '#1ed760' }}>player</h1>
-            
+            <button onClick={()=>{Pause(a.access_token)}}>Pause</button>
         </div>
+        
 )
 
 }

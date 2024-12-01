@@ -29,3 +29,5 @@ export default async function Post(ode){
 }
 
 }
+
+//add a function which you will send request from frontend to fetch the image and essential data used to display to the frontend
