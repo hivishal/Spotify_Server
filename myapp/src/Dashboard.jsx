@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react'
+import React, { useState , useEffect} from 'react'
 import './Login.css'
 
 export default function Dashboard(){
@@ -7,7 +7,7 @@ export default function Dashboard(){
     const a = JSON.parse(token);
     const [player, setPlayer] = useState(undefined);
     const [device , setdevice] = useState(undefined);
-   
+    const [Stop,setStop] = useState(true);
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -43,6 +43,14 @@ export default function Dashboard(){
         }
         };
     }, [a.access_token]);
+
+    useEffect(()=>{
+        if(device!==undefined){   //this code is causing error!
+            transferPlayback(a.access_token,device);
+            Initialplay(device,a.access_token);
+        }
+
+    },[a.access_token,device,player]);
     
 
         const transferPlayback = async (accessToken, device) => {
@@ -70,20 +78,15 @@ export default function Dashboard(){
         };
 
 
-    if(device!==undefined){
-        transferPlayback(a.access_token,device);
-        Initialplay(device, a.access_token);
-    }
-
     async function  Initialplay(device, accessToken) {
         const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
         const trackUri = 'spotify:track:0G21yYKMZoHa30cYVi1iA8?si=ebd661cc1c9c4c21';
         const body = {
             uris: [trackUri],  
-            position_ms: 0     
+            position_ms: 1000
         };
     
-        const c  = await fetch(url, {
+        await fetch(url, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -91,7 +94,6 @@ export default function Dashboard(){
             },
             body: JSON.stringify(body)
         })
-        return c ;
     }
 
     async function Pause(token){
@@ -102,18 +104,67 @@ export default function Dashboard(){
             headers:{
                 Authorization: `Bearer ${token}`
             }
-        })
-        return(response)
+        });
+        return(response);
     }catch(error){
         console.error(error);
     }
     }
+
+    async function Next(token){
+        const uri = 'https://api.spotify.com/v1/me/player/next';
+        try{
+        await fetch(uri,{
+            method:'POST',
+            headers:{
+                Authorization  : `Bearer ${token}`
+            }
+        })
+        setStop(true);
+    }catch(error){
+        console.error(error);
+    }
+
+    }
+
+    async function Previous(token){
+        const uri = 'https://api.spotify.com/v1/me/player/previous';
+        try{
+        await fetch(uri,{
+            method:'POST',
+            headers:{
+                Authorization  : `Bearer ${token}`
+            }
+        })
+    }catch(error){
+        console.error(error);
+    }
+
+    }
+
+    async function Resume(token){
+        const uri = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
+        await fetch(uri,{
+            method:'PUT',
+            headers:{
+                Authorization : `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+    
+    }
+
     
     return (
         <div className='child'>
-            <h1 style={{ color: '#1ed760' }}>gello world</h1>
-            <h1 style={{ color: '#1ed760' }}>player</h1>
-            <button onClick={()=>{Pause(a.access_token)}}>Pause</button>
+            <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
+            {Stop ? (
+            <button  onClick={() => { Pause(a.access_token);setStop(false); }}>Pause</button>
+            ) : (
+            <button onClick={() => { Resume(a.access_token);setStop(true); }}>Resume</button>
+            )}
+
+            <button onClick={()=>{Next(a.access_token)}}>Next</button>
         </div>
         
 )
