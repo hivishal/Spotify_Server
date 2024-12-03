@@ -37,11 +37,11 @@ export default function Dashboard(){
     
     
            await player.connect();
-
+        }
         return()=>{
             document.body.removeChild(script)
         }
-        };
+
     }, [a.access_token]);
 
     useEffect(()=>{
@@ -78,23 +78,24 @@ export default function Dashboard(){
         };
 
 
-    async function  Initialplay(device, accessToken) {
-        const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
-        const trackUri = 'spotify:track:0G21yYKMZoHa30cYVi1iA8?si=ebd661cc1c9c4c21';
-        const body = {
-            uris: [trackUri],  
-            position_ms: 1000
-        };
-    
-        await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        })
-    }
+        async function  Initialplay(device, accessToken) {
+            const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
+            const trackUri = 'spotify:track:6DCZcSspjsKoFjzjrWoCdn';
+            const body = {
+                uris: [trackUri],  
+                position_ms: 1000
+            };
+        
+            await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+        }
+        
 
     async function Pause(token){
         const uri = 'https://api.spotify.com/v1/me/player/pause'
