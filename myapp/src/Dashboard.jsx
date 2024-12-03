@@ -83,7 +83,7 @@ export default function Dashboard(){
             const trackUri = 'spotify:track:6DCZcSspjsKoFjzjrWoCdn';
             const body = {
                 uris: [trackUri],  
-                position_ms: 1000
+                position_ms: 7000
             };
         
             await fetch(url, {
