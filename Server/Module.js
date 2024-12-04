@@ -5,7 +5,7 @@ dotenv.config();
 const client_id = process.env.CLIENT_ID ;
 const client_secret = process.env.CLIENT_SECRET
 
-export default async function Post(ode){
+export  async function Post(ode){
     try{
     const params = new URLSearchParams({
         'grant_type': 'authorization_code',
@@ -30,4 +30,13 @@ export default async function Post(ode){
 
 }
 
-//add a function which you will send request from frontend to fetch the image and essential data used to display to the frontend
+export async function UserSaved(token){
+    const url = `https://api.spotify.com/v1/me/tracks?market=ES&limit=5&offset=0`;
+    const response =  await fetch(url,{
+        method:"GET",
+        headers:{
+            Authorization:`Bearer ${token}`
+        }
+    })
+    return response;
+}
