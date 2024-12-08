@@ -48,11 +48,11 @@ export default function Dashboard(){
         if(device!==undefined){   //this code is causing error!
             transferPlayback(a.access_token,device);
             Initialplay(device,a.access_token);
-        }
-
+            console.log(a.access_token);
+        };
+        
     },[a.access_token,device,player]);
     
-
         const transferPlayback = async (accessToken, device) => {
             const url = 'https://api.spotify.com/v1/me/player';
             const body = {
@@ -94,6 +94,7 @@ export default function Dashboard(){
                 },
                 body: JSON.stringify(body)
             });
+            
         }
         
 
@@ -154,10 +155,9 @@ export default function Dashboard(){
         })
     
     }
-
     
     return (
-        <div className='child'>
+        <div className='parent'>
             <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
             {Stop ? (
             <button  onClick={() => { Pause(a.access_token);setStop(false); }}>Pause</button>
@@ -166,8 +166,7 @@ export default function Dashboard(){
             )}
 
             <button onClick={()=>{Next(a.access_token)}}>Next</button>
-        </div>
-        
+            </div>   
 )
 
 }

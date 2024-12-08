@@ -8,6 +8,16 @@
    
 }
 
+.parent{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: #292929;
+   
+}
+
 .click {
     background-color:#1ed760;
     border-radius: 5%;
