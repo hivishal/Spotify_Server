@@ -8,6 +8,7 @@ export default function Dashboard(){
     const [player, setPlayer] = useState(undefined);
     const [device , setdevice] = useState(undefined);
     const [Stop,setStop] = useState(true);
+    const [Img,Setimg] = useState(false);
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -45,15 +46,19 @@ export default function Dashboard(){
     }, [a.access_token]);
 
     useEffect(()=>{
-        if(device!==undefined){   //this code is causing error!
-            transferPlayback(a.access_token,device);
-            Initialplay(device,a.access_token);
-            console.log(a.access_token);
-        };
-        
+        async function trigger(){
+            if(device!==undefined){   
+                await transferPlayback(a.access_token,device);
+                Initialplay(device,a.access_token);
+                Play(a.access_token);
+                console.log(a.access_token);
+            };
+        }
+        trigger();
     },[a.access_token,device,player]);
+
     
-        const transferPlayback = async (accessToken, device) => {
+    const transferPlayback = async (accessToken, device) => {
             const url = 'https://api.spotify.com/v1/me/player';
             const body = {
                 device_ids: [device],
@@ -78,12 +83,20 @@ export default function Dashboard(){
         };
 
 
-        async function  Initialplay(device, accessToken) {
+    async function  Initialplay(device, accessToken) {
+            const response = await Play(accessToken);
+            let tobaco = {"uris" : ''};
+            let track = [] ;
+            for(let i = 0  ; i < 20  ; i ++){
+                    track[i] = response[i].uri 
+            }
+            tobaco.uris = track ;
+            console.log('this is trakc ',response);
+            Setimg(response[0].img.url);
+            console.log(tobaco);
             const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
-            const trackUri = 'spotify:track:6DCZcSspjsKoFjzjrWoCdn';
             const body = {
-                uris: [trackUri],  
-                position_ms: 7000
+                uris: track,  
             };
         
             await fetch(url, {
@@ -94,9 +107,36 @@ export default function Dashboard(){
                 },
                 body: JSON.stringify(body)
             });
-            
-        }
+            console.log(Img);
+}
         
+    async function Play(accessToken){ //purpose is to get users saved tracks and display or transfer it to the playback 
+        try{
+        const uri = 'https://api.spotify.com/v1/me/tracks?market=ES&limit=20&offset=0';
+        const response = await fetch(uri,{
+            method : 'GET',
+            headers:{
+                Authorization: `Bearer ${accessToken}`
+            },
+        })
+        const data = await response.json() ;
+        console.log(data);
+        let array=[] ;
+        for(let i = 0 ;i<data.items.length ; i ++){
+            console.log(data.items[i].track.uri);
+            let obj = {} ;
+            console.log(obj);
+            obj.img = data.items[i].track.album.images[1];
+            obj.uri = data.items[i].track.uri;
+            array[i] = obj ;
+        }
+        console.log('array output',array);
+        console.log("this is the output of play function",array);
+        return array ;
+    }catch(error){
+        console.error(error);
+    }
+}
 
     async function Pause(token){
         const uri = 'https://api.spotify.com/v1/me/player/pause'
@@ -158,6 +198,7 @@ export default function Dashboard(){
     
     return (
         <div className='parent'>
+            {Img ? (<img src={Img}/>):(<h1>loading image por favor senior ! </h1>)}
             <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
             {Stop ? (
             <button  onClick={() => { Pause(a.access_token);setStop(false); }}>Pause</button>
@@ -166,7 +207,8 @@ export default function Dashboard(){
             )}
 
             <button onClick={()=>{Next(a.access_token)}}>Next</button>
-            </div>   
+        </div>  
+         
 )
 
 }
