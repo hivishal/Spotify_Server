@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react'
+import React, { useState , useEffect, useRef} from 'react'
 import './Login.css'
 
 export default function Dashboard(){
@@ -9,6 +9,7 @@ export default function Dashboard(){
     const [device , setdevice] = useState(undefined);
     const [Stop,setStop] = useState(true);
     const [Img,Setimg] = useState(false);
+    const chitra = useRef(false);
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -47,7 +48,7 @@ export default function Dashboard(){
 
     useEffect(()=>{
         async function trigger(){
-            if(device!==undefined){   
+            if(device&&player!==undefined){   
                 await transferPlayback(a.access_token,device);
                 Initialplay(device,a.access_token);
                 Play(a.access_token);
@@ -57,7 +58,7 @@ export default function Dashboard(){
         trigger();
     },[a.access_token,device,player]);
 
-    
+
     const transferPlayback = async (accessToken, device) => {
             const url = 'https://api.spotify.com/v1/me/player';
             const body = {
@@ -91,9 +92,7 @@ export default function Dashboard(){
                     track[i] = response[i].uri 
             }
             tobaco.uris = track ;
-            console.log('this is trakc ',response);
             Setimg(response[0].img.url);
-            console.log(tobaco);
             const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
             const body = {
                 uris: track,  
@@ -107,7 +106,6 @@ export default function Dashboard(){
                 },
                 body: JSON.stringify(body)
             });
-            console.log(Img);
 }
         
     async function Play(accessToken){ //purpose is to get users saved tracks and display or transfer it to the playback 
@@ -123,15 +121,11 @@ export default function Dashboard(){
         console.log(data);
         let array=[] ;
         for(let i = 0 ;i<data.items.length ; i ++){
-            console.log(data.items[i].track.uri);
             let obj = {} ;
-            console.log(obj);
             obj.img = data.items[i].track.album.images[1];
             obj.uri = data.items[i].track.uri;
             array[i] = obj ;
         }
-        console.log('array output',array);
-        console.log("this is the output of play function",array);
         return array ;
     }catch(error){
         console.error(error);
@@ -154,6 +148,7 @@ export default function Dashboard(){
     }
 
     async function Next(token){
+        const data = await GetState(token);
         const uri = 'https://api.spotify.com/v1/me/player/next';
         try{
         await fetch(uri,{
@@ -162,14 +157,26 @@ export default function Dashboard(){
                 Authorization  : `Bearer ${token}`
             }
         })
-        setStop(true);
+        Setimg(data) ;
     }catch(error){
         console.error(error);
     }
+}
 
+    async function GetState(token){
+        const uri =  `https://api.spotify.com/v1/me/player?market=ES`;
+        const response = await fetch(uri,{
+            method:'GET',
+            headers:{
+                Authorization : `Bearer ${token}`
+            }
+        });
+        const data = await response.json();
+        return(data.item.album.images[1].url);
     }
 
     async function Previous(token){
+        const data = await GetState(token);
         const uri = 'https://api.spotify.com/v1/me/player/previous';
         try{
         await fetch(uri,{
@@ -178,6 +185,7 @@ export default function Dashboard(){
                 Authorization  : `Bearer ${token}`
             }
         })
+        Setimg(data) ;
     }catch(error){
         console.error(error);
     }
@@ -185,6 +193,8 @@ export default function Dashboard(){
     }
 
     async function Resume(token){
+     
+        try{
         const uri = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
         await fetch(uri,{
             method:'PUT',
@@ -192,13 +202,17 @@ export default function Dashboard(){
                 Authorization : `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
-        })
-    
+        });
+        
+    }catch(error){
+        console.log(error);
     }
+}
+
     
     return (
         <div className='parent'>
-            {Img ? (<img src={Img}/>):(<h1>loading image por favor senior ! </h1>)}
+            {Img ? (<img src={Img} alt='tero baau'/>):(<h1>loading image por favor senior ! </h1>)}
             <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
             {Stop ? (
             <button  onClick={() => { Pause(a.access_token);setStop(false); }}>Pause</button>
