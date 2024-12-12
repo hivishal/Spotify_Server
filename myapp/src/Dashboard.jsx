@@ -1,15 +1,15 @@
-import React, { useState , useEffect, useRef} from 'react'
+import React, { useState , useEffect} from 'react'
 import './Login.css'
 
 export default function Dashboard(){
     const q = new URLSearchParams(window.location.search).get('token');
     const token = decodeURIComponent(q);
     const a = JSON.parse(token);
-    const [player, setPlayer] = useState(undefined);
-    const [device , setdevice] = useState(undefined);
+    const [player,setPlayer] = useState(undefined);
+    const [device,setdevice] = useState(undefined);
     const [Stop,setStop] = useState(true);
-    const [Img,Setimg] = useState(false);
-    const chitra = useRef(false);
+    const [image,setimage] = useState(false);
+
 
     useEffect(() => {
         const script = document.createElement("script");
@@ -37,8 +37,15 @@ export default function Dashboard(){
                 console.log('Device ID has gone offline', device_id);
             });
     
-    
            await player.connect();
+           let count = 0 ;
+           if(player && count <1){
+            await player.setName("Noob").then(() => {
+                count = count + 1 ;
+                console.log('Player name updated!');
+              });
+           }
+
         }
         return()=>{
             document.body.removeChild(script)
@@ -47,15 +54,17 @@ export default function Dashboard(){
     }, [a.access_token]);
 
     useEffect(()=>{
-        async function trigger(){
+        async function trigger(token){
             if(device&&player!==undefined){   
                 await transferPlayback(a.access_token,device);
-                Initialplay(device,a.access_token);
-                Play(a.access_token);
+                await Initialplay(device,a.access_token);
+                await Play(a.access_token);
+                let c = await GetState(token);
+                setimage(c);
                 console.log(a.access_token);
             };
         }
-        trigger();
+        trigger(a.access_token);
     },[a.access_token,device,player]);
 
 
@@ -83,7 +92,6 @@ export default function Dashboard(){
             }
         };
 
-
     async function  Initialplay(device, accessToken) {
             const response = await Play(accessToken);
             let tobaco = {"uris" : ''};
@@ -92,7 +100,6 @@ export default function Dashboard(){
                     track[i] = response[i].uri 
             }
             tobaco.uris = track ;
-            Setimg(response[0].img.url);
             const url = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
             const body = {
                 uris: track,  
@@ -106,6 +113,7 @@ export default function Dashboard(){
                 },
                 body: JSON.stringify(body)
             });
+    return ;
 }
         
     async function Play(accessToken){ //purpose is to get users saved tracks and display or transfer it to the playback 
@@ -141,6 +149,7 @@ export default function Dashboard(){
                 Authorization: `Bearer ${token}`
             }
         });
+        setStop(false);
         return(response);
     }catch(error){
         console.error(error);
@@ -148,7 +157,6 @@ export default function Dashboard(){
     }
 
     async function Next(token){
-        const data = await GetState(token);
         const uri = 'https://api.spotify.com/v1/me/player/next';
         try{
         await fetch(uri,{
@@ -157,7 +165,11 @@ export default function Dashboard(){
                 Authorization  : `Bearer ${token}`
             }
         })
-        Setimg(data) ;
+        let respons = await GetState(token);
+        setimage(respons);
+        return respons ;
+
+        
     }catch(error){
         console.error(error);
     }
@@ -171,12 +183,16 @@ export default function Dashboard(){
                 Authorization : `Bearer ${token}`
             }
         });
+        if(response == null){
+            console.log(`awaiting data`);
+            return ;
+        }
         const data = await response.json();
         return(data.item.album.images[1].url);
+        
     }
 
     async function Previous(token){
-        const data = await GetState(token);
         const uri = 'https://api.spotify.com/v1/me/player/previous';
         try{
         await fetch(uri,{
@@ -185,15 +201,15 @@ export default function Dashboard(){
                 Authorization  : `Bearer ${token}`
             }
         })
-        Setimg(data) ;
+        let respons = await GetState(token);
+        setimage(respons);
+        return respons ;
     }catch(error){
         console.error(error);
     }
-
-    }
+}
 
     async function Resume(token){
-     
         try{
         const uri = `https://api.spotify.com/v1/me/player/play?device_id=${device}`;
         await fetch(uri,{
@@ -203,7 +219,7 @@ export default function Dashboard(){
                 'Content-Type': 'application/json'
             }
         });
-        
+        setStop(true);
     }catch(error){
         console.log(error);
     }
@@ -212,15 +228,17 @@ export default function Dashboard(){
     
     return (
         <div className='parent'>
-            {Img ? (<img src={Img} alt='tero baau'/>):(<h1>loading image por favor senior ! </h1>)}
+            {image ? (<img src={image} alt='tero baau'/>):(<h1 style={{ color: '#1ed760' }}>loading image por favor senior ! </h1>)}
+            <div className='gap'>
             <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
             {Stop ? (
-            <button  onClick={() => { Pause(a.access_token);setStop(false); }}>Pause</button>
+            <button  onClick={() => { Pause(a.access_token) }}>Pause</button>
             ) : (
-            <button onClick={() => { Resume(a.access_token);setStop(true); }}>Resume</button>
+            <button onClick={() => { Resume(a.access_token) }}>Resume</button>
             )}
-
             <button onClick={()=>{Next(a.access_token)}}>Next</button>
+        
+            </div>
         </div>  
          
 )
