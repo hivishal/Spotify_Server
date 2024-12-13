@@ -165,7 +165,9 @@ export default function Dashboard(){
                 Authorization  : `Bearer ${token}`
             }
         })
+        await new Promise(resolve=>{setTimeout(resolve,500)})
         let respons = await GetState(token);
+        setStop(true);
         setimage(respons);
         return respons ;
 
@@ -187,6 +189,7 @@ export default function Dashboard(){
             console.log(`awaiting data`);
             return ;
         }
+        console.log(response);
         const data = await response.json();
         return(data.item.album.images[1].url);
         
@@ -201,7 +204,9 @@ export default function Dashboard(){
                 Authorization  : `Bearer ${token}`
             }
         })
+        await new Promise(resolve=>{setTimeout(resolve,500)})
         let respons = await GetState(token);
+        setStop(false);
         setimage(respons);
         return respons ;
     }catch(error){
@@ -232,9 +237,9 @@ export default function Dashboard(){
             <div className='gap'>
             <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
             {Stop ? (
-            <button  onClick={() => { Pause(a.access_token) }}>Pause</button>
+            <button  onClick={() => { Pause(a.access_token);setStop(false) }}>Pause</button>
             ) : (
-            <button onClick={() => { Resume(a.access_token) }}>Resume</button>
+            <button onClick={() => { Resume(a.access_token);setStop(true) }}>Resume</button>
             )}
             <button onClick={()=>{Next(a.access_token)}}>Next</button>
         
