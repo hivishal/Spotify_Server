@@ -11,6 +11,7 @@ const client_secret = process.env.CLIENT_SECRET
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('index.html'));
 
 
 app.get('/login',async(req,res)=>{

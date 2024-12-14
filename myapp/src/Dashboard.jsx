@@ -83,6 +83,8 @@ export default function Dashboard(){
                 },
                 body: JSON.stringify(body),
             });
+
+            
         
             if (response.ok) {
                 console.log('Playback transferred successfully');
@@ -118,7 +120,7 @@ export default function Dashboard(){
         
     async function Play(accessToken){ //purpose is to get users saved tracks and display or transfer it to the playback 
         try{
-        const uri = 'https://api.spotify.com/v1/me/tracks?market=ES&limit=20&offset=0';
+        const uri = 'https://api.spotify.com/v1/me/tracks?market=ES&limit=50&offset=0';
         const response = await fetch(uri,{
             method : 'GET',
             headers:{
@@ -225,24 +227,37 @@ export default function Dashboard(){
             }
         });
         setStop(true);
+        await new Promise(resolve=>{setTimeout(resolve,500)})
+        let respons = await GetState(token);
+        setimage(respons);
     }catch(error){
         console.log(error);
     }
 }
 
+function Shuffle(token){
+    const uri = `https://api.spotify.com/v1/me/player/shuffle?state=true`;
+    fetch(uri,{
+        method:"PUT",
+        headers:{
+            Authorization : `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+}
     
     return (
         <div className='parent'>
-            {image ? (<img src={image} alt='tero baau'/>):(<h1 style={{ color: '#1ed760' }}>loading image por favor senior ! </h1>)}
+            {image? (<img className='border' src={image} alt='tero baau'/> ):(<h1 style={{ color: '#1ed760' }}>loading image por favor senior ! </h1>)}
             <div className='gap'>
-            <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
-            {Stop ? (
-            <button  onClick={() => { Pause(a.access_token);setStop(false) }}>Pause</button>
-            ) : (
-            <button onClick={() => { Resume(a.access_token);setStop(true) }}>Resume</button>
-            )}
-            <button onClick={()=>{Next(a.access_token)}}>Next</button>
-        
+                <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
+                {Stop ? (
+                <button  onClick={() => { Pause(a.access_token);setStop(false) }}>Pause</button>
+                ) : (
+                <button onClick={() => { Resume(a.access_token);setStop(true) }}>Resume</button>
+                )}
+                <button onClick={()=>{Next(a.access_token)}}>Next</button>
+                <button onClick={()=>{Shuffle(a.access_token)}}>shuffle</button>
             </div>
         </div>  
          
