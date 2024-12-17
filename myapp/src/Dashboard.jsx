@@ -1,5 +1,6 @@
 import React, { useState , useEffect} from 'react'
 import './Login.css'
+import Song from './ListSongs'
 
 export default function Dashboard(){
     const q = new URLSearchParams(window.location.search).get('token');
@@ -259,6 +260,7 @@ function Shuffle(token){
                 <button onClick={()=>{Next(a.access_token)}}>Next</button>
                 <button onClick={()=>{Shuffle(a.access_token)}}>shuffle</button>
             </div>
+            <Song/>
         </div>  
          
 )
