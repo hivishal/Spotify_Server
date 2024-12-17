@@ -43,3 +43,11 @@
 .border{
     border:4px solid white;
 }
+
+.levis{
+    margin: 10px;
+    position: absolute;
+    height: 440px;
+    width: 550px;
+    right: 0px;
+}

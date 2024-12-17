@@ -248,9 +248,12 @@ function Shuffle(token){
 }
     
     return (
+        <>
+        <img src="/levis.png" alt="levis slicing" className='levis' />
         <div className='parent'>
             {image? (<img className='border' src={image} alt='tero baau'/> ):(<h1 style={{ color: '#1ed760' }}>loading image por favor senior ! </h1>)}
             <div className='gap'>
+           
                 <button onClick={()=>{Previous(a.access_token)}}>Previous</button>
                 {Stop ? (
                 <button  onClick={() => { Pause(a.access_token);setStop(false) }}>Pause</button>
@@ -262,6 +265,7 @@ function Shuffle(token){
             </div>
             <Song/>
         </div>  
+        </>
          
 )
 
