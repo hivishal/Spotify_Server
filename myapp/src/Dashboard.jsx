@@ -99,7 +99,7 @@ export default function Dashboard(){
             const response = await Play(accessToken);
             let tobaco = {"uris" : ''};
             let track = [] ;
-            for(let i = 0  ; i < 20  ; i ++){
+            for(let i = 0  ; i < 50  ; i ++){
                     track[i] = response[i].uri 
             }
             tobaco.uris = track ;
@@ -249,7 +249,6 @@ function Shuffle(token){
     
     return (
         <>
-        <img src="/levis.png" alt="levis slicing" className='levis' />
         <div className='parent'>
             {image? (<img className='border' src={image} alt='tero baau'/> ):(<h1 style={{ color: '#1ed760' }}>loading image por favor senior ! </h1>)}
             <div className='gap'>

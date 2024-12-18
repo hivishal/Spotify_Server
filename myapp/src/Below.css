@@ -1,4 +1,12 @@
 .songs_tab{
     background-color:  #292929;
-    border-radius: 4%;
+    border-radius: 4px;
+    padding:20px;
+   
+}
+
+.sizze{
+    height: 20px;
+    width: 90px;
+
 }

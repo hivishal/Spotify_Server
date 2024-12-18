@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import './Below.css'
 export default function Song(){
-    return(
+
+
+
+return(
         <div className="songs_tab">
-            <h1>here comes the logic</h1>
-            <div className="liked"><h1>load your songs here the liked ones</h1></div>
-            <div className="recommended">Recommend here</div>
-            <div className="queue">view your queue</div>
+            <div className="uppertab">
+                <button><div className="liked sizze"><h3>heart</h3></div></button>
+                <button><div className="recommended sizze"><h3>Reccomendation</h3></div></button>
+                <button><div className="liked sizze"><h3>queue</h3></div></button>
+            </div>
         </div>
     )
 }
